@@ -50,7 +50,7 @@ function Hyou() {
 
   let d = new Date();
   const nowMonth = d.getMonth() + 1;
-  const nowYear = d.getFullYear+1;
+  const nowYear = d.getFullYear();
   const names = GetEmployees(); // GetEmployees の実装を確認してください
 
   useEffect(() => {
@@ -61,7 +61,7 @@ function Hyou() {
     // fetchData 関数の定義
     const fetchData = async (collectionName, id) => {
       try {
-        const documentId = nowMonth.toString()+"-"+nowYear.toString();
+        const documentId = nowYear.toString()+"-"+nowMonth.toString();
         const documentRef = doc(db, documentId, collectionName); // db と doc の実装を確認してください
         const documentSnapshot = await getDoc(documentRef);
 

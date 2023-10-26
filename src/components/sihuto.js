@@ -11,6 +11,7 @@ function MyComponent() {
   const documentId = nowMonth.toString();
   console.log(nowMonth);
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -51,14 +52,14 @@ function Shihuto() {
     const [documentDataArray, setDocumentDataArray] = useState([]); // データを格納する配列
     const d = new Date();
     const nowMonth = d.getMonth() + 1;
-    const nowYear = d.getFullYear+1;
+    const nowYear = d.getFullYear();
     const names = GetEmployees();
   
     useEffect(() => {
       const fetchData = async (collectionName) => {
         try {
-          const documentId = nowMonth.toString()+"-"+nowYear.toString();
-          const documentRef = doc(db, documentId, collectionName);
+          const documentId = nowYear.toString()+"-"+nowMonth.toString();
+          const documentRef = doc(db, documentId, collectionName); // db と doc の実装を確認してください
           const documentSnapshot = await getDoc(documentRef);
   
           if (documentSnapshot.exists()) {

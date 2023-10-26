@@ -83,6 +83,39 @@ function GetEmployees() {
   return employees;
 }
 
+function GetEmployeesNumber() {
+  const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+      async function fetchEmployees() {
+          try {
+              const requestUrl = `https://api.freee.co.jp/hr/api/v1/companies/${companyId}/employees?limit=50&with_no_payroll_calculation=true`;
+              const response = await fetch(requestUrl, getRequestOptions('GET'));
+
+              if (response.status === 200) {
+                  const responseJson = await response.json();
+                  const employeeInfo = responseJson.map((employee) => {
+                    return {
+                      id: employee.id,
+                      name: employee.display_name,
+                    };
+                  });
+                  console.log(responseJson);
+                  setEmployees(employeeInfo);
+                 
+              } else {
+                  console.error('APIエラー:', response.statusText);
+              }
+          } catch (error) {
+              console.error('APIリクエストエラー:', error);
+          }
+      }
+      fetchEmployees();
+  }, []);
+
+  return employees.length;
+}
+
 function GetNames() {
     const [employeeNames, setEmployeeNames] = useState([]);
   
@@ -141,6 +174,6 @@ async function GetActive(id) {
 
 
 
-export { CompanyName, GetEmployees ,GetNames,GetActive};
+export { CompanyName, GetEmployees ,GetNames,GetActive,GetEmployeesNumber};
 
 

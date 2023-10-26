@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { GetEmployees } from "./API.js"
 
 
@@ -63,28 +63,36 @@ import { GetEmployees } from "./API.js"
 // }
 
 // function Sakusei() {
-//   const employees = GetEmployees();
 //   const today = new Date();
 //   const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
 //   const lastDay = new Date(nextMonth.getFullYear(), nextMonth.getMonth() + 1, 0);
 //   const numberOfDays = lastDay.getDate();
-//   const [shiftData, setShiftData] = useState(() =>
-//     employees.map(() => Array(numberOfDays).fill(''))
-//   );
-
-//   const handleShiftChange = (employeeIndex, day, value) => {
-//     setShiftData((prevData) => {
-//       const newData = [...prevData];
-//       newData[employeeIndex] = [...newData[employeeIndex]]; // 新しい配列を作成
-//       newData[employeeIndex][day] = value;
-//       return newData;
-//     });
+//   const [shiftData, setShiftData] = useState(new Array(numberOfDays).fill(''));
+//   const [names, setNames] = useState([]); // ユーザーの名前を格納
+//   const names1=GetEmployees();
+//   useEffect(() => {
+//     // ページがロードされた際に GetEmployees() から名前を取得
+//     const fetchedNames = names1.map(employee => employee.name); // 名前を抽出
+//     setNames(fetchedNames);
+//   }, []); // [] 内の変数が変化したときに再実行される
+//   // データを保存するための関数
+//   const saveData = (data) => {
+//     setShiftData(data);
 //   };
 
+//   // テキストフィールドの変更を処理する関数
+//   const handleShiftChange = (index, value) => {
+//     const newData = [...shiftData];
+//     newData[index] = value;
+//     saveData(newData);
+//   };
+
+//   // データ送信ボタンをクリックしたときの処理
 //   const handleSubmit = () => {
-//     // 入力データを多重配列に変換する関数
-//     const multiArray = shiftData;
-//     console.log(multiArray);
+//     // 1行ずつコンソールに表示
+//     shiftData.forEach((row, rowIndex) => {
+//       console.log(`名前: ${names[rowIndex]}, データ: ${row}`);
+//     });
 //   };
 
 //   return (
@@ -99,17 +107,15 @@ import { GetEmployees } from "./API.js"
 //           </tr>
 //         </thead>
 //         <tbody>
-//           {employees.map((employee, employeeIndex) => (
-//             <tr key={employee.id}>
-//               <td>{employee.name}</td>
-//               {[...Array(numberOfDays).keys()].map((day) => (
-//                 <td key={day + 1}>
+//           {names1.map((name, employeeIndex) => (
+//             <tr key={employeeIndex}>
+//               <td>{name.name}</td> {/* 実際の名前を表示 */}
+//               {shiftData.map((value, index) => (
+//                 <td key={index}>
 //                   <input
 //                     type="text"
-//                     value={shiftData[employeeIndex][day] || ''}
-//                     onChange={(e) =>
-//                       handleShiftChange(employeeIndex, day, e.target.value)
-//                     }
+//                     value={value}
+//                     onChange={(e) => handleShiftChange(index, e.target.value)}
 //                   />
 //                 </td>
 //               ))}
@@ -117,19 +123,134 @@ import { GetEmployees } from "./API.js"
 //           ))}
 //         </tbody>
 //       </table>
-//       <button onClick={handleSubmit}>シフトデータ送信</button>
+//       <button onClick={handleSubmit}>データ送信</button>
 //     </div>
 //   );
 // }
 
 
-function Sakusei(){
+// function Sakusei(){
+//   const today = new Date();
+//   const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+//   const lastDay = new Date(nextMonth.getFullYear(), nextMonth.getMonth() + 1, 0);
+//   const numberOfDays = lastDay.getDate();
+//   const names = GetEmployees();
+//   const [shiftData, setShiftData] = useState({});
+
+//   console.log(names);
+//   return(
+//     <div>
+//         <table>
+//           <thead>
+//             <tr>
+//               <th>名前</th>
+//               {Array.from({ length: numberOfDays }, (_, i) => i + 1).map((day) => (
+//                 <th key={day}>{day}日</th>
+//               ))}
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {names.map((employee, index) => (
+//               <tr key={employee.id}>
+//                 <td>{employee.name}</td>
+//               </tr>
+//             ))}
+
+
+//           </tbody>
+//         </table>
+//       </div>
+//   );
+// }
+
+
+function Sakusei() {
   const today = new Date();
   const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
   const lastDay = new Date(nextMonth.getFullYear(), nextMonth.getMonth() + 1, 0);
   const numberOfDays = lastDay.getDate();
-  const names = GetEmployees();
+  const [data, setData] = useState([]);
+  const [results, setResults] = useState([]);
+  const names =  GetEmployees();
 
-  console.log(names);
+  useEffect(() => {
+    // GetEmployees()から名前を取得
+    const fetchNames = async () => {
+      try {
+        const length = names.length;
+        const initialData = new Array(length).fill([]).map(() => Array(numberOfDays).fill(''));
+        setData(initialData);
+      } catch (error) {
+        // エラーハンドリング
+        console.error("データの取得中にエラーが発生しました:", error);
+      }
+    };
+
+    fetchNames();
+  }, [names]);
+
+  const handleInputChange = (rowIndex, colIndex, value) => {
+    const newData = [...data];
+    newData[rowIndex][colIndex] = value;
+    setData(newData);
+  };
+
+  const handleDisplayData = () => {
+    const newData = []; // 新しいデータ配列
+  
+    data.forEach((row, rowIndex) => {
+      const rowData = row.map((value) => {
+        return `${value}`;
+      });
+      const newRowData = {
+        row: rowIndex + 1,
+        data: rowData,
+      };
+      newData.push(newRowData);
+    });
+  
+    // results ステートにデータを追加
+    setResults(newData);
+    console.log(results[1].data[2])//ひとつのデータを取れる
+  };
+  
+  
+
+  return (
+    <div>
+      <h1>データ入力</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>名前</th>
+            {[...Array(numberOfDays).keys()].map((day) => (
+              <th key={day + 1}>{day + 1}日</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              <td>{names[rowIndex].name}</td>
+              {row.map((value, colIndex) => (
+                <td key={colIndex}>
+                  <input
+                    type="text"
+                    value={value}
+                    onChange={(e) =>
+                      handleInputChange(rowIndex, colIndex, e.target.value)
+                    }
+                  />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <button onClick={handleDisplayData}>データ表示</button>
+    </div>
+  );
 }
+
+
 export default Sakusei;

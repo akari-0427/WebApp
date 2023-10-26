@@ -49,29 +49,36 @@ function MyComponent() {
 
 function Shihuto() {
     const [documentDataArray, setDocumentDataArray] = useState([]); // データを格納する配列
-    let d = new Date();
+    const d = new Date();
     const nowMonth = d.getMonth() + 1;
-    const nowHours = d.getHours();
-    const nowMinutes = d.getMinutes();
-    const nowDay = d.getDay();
+    const nowYear = d.getFullYear+1;
     const names = GetEmployees();
   
     useEffect(() => {
       const fetchData = async (collectionName) => {
         try {
-          // ここで documentDataArray を空の配列にリセット
-          setDocumentDataArray([]);
-  
-          const documentId = nowMonth.toString();
-          const documentRef = doc(db, collectionName, documentId);
+          const documentId = nowMonth.toString()+"-"+nowYear.toString();
+          const documentRef = doc(db, documentId, collectionName);
           const documentSnapshot = await getDoc(documentRef);
   
           if (documentSnapshot.exists()) {
-            // ドキュメントが存在する場合
             const documentData = documentSnapshot.data();
-            console.log(`ドキュメントデータ (${collectionName}):`, documentData);
-            // 配列にデータを追加
-            setDocumentDataArray((prevDataArray) => [...prevDataArray, documentData]);
+            setDocumentDataArray((prevDataArray) => {
+              // 新しいデータを追加するために配列をコピー
+              const newDataArray = [...prevDataArray];
+  
+              // フィールド名が1から31のデータを格納する配列
+              const dailyData = [];
+  
+              for (let i = 1; i <= 31; i++) {
+                // フィールド名が "1" から "31" のデータを取得して dailyData に追加
+                dailyData.push(documentData[i.toString()] || null);
+              }
+  
+              newDataArray.push(dailyData);
+  
+              return newDataArray;
+            });
           } else {
             console.log(`指定されたドキュメント (${collectionName}) が存在しません。`);
           }
@@ -89,8 +96,39 @@ function Shihuto() {
     // documentDataArray 配列の内容を表示
     console.log(documentDataArray);
   
-    return null;
+    return (
+      <div>
+        <h2>{nowMonth}月のシフト</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>名前</th>
+              {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
+                <th key={day}>{day}日</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {names.map((employee, index) => (
+              <tr key={employee.id}>
+                <td>{employee.name}</td>
+                {documentDataArray[index] ? ( // 各要素が存在するかどうかを確認
+                  documentDataArray[index].map((item, i) => (
+                    <td key={i}>{item}</td>
+                  ))
+                ) : (
+                  // 存在しない場合は空のセルを表示
+                  Array.from({ length: 31 }, (_, i) => <td key={i}></td>)
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
   }
   
+  
+  
 
-export default MyComponent;
+export default Shihuto;

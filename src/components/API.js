@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const accessToken = 'bdbd92b07e40eaaa50219f6d169c70ba38a431994e63d61bdf47607aa6cf9d60';
+const accessToken = '9ec9cd9966bda01f076af35433311ea732055e89020f4da1ddcb90093d5b6559';
 const companyId = 10902758;
 
 function getRequestOptions(method, payload) {
@@ -114,6 +114,33 @@ function GetNames() {
   }
 
 
-export { CompanyName, GetEmployees ,GetNames};
+async function GetActive(id) {
+    try {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth() + 1;
+        const day = today.getDate();
+        const formattedDate = `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
+        const requestUrl = `https://api.freee.co.jp/hr/api/v1/employees/${id}/time_clocks/available_types?company_id=${companyId}&date=${formattedDate}`;
+
+        const response = await fetch(requestUrl, getRequestOptions());
+
+        if (response.status === 200) {
+            const responseJson = await response.json();
+            console.log(responseJson);
+            return responseJson;
+        } else {
+            console.error('APIエラー:', response.statusText);
+            return null;
+        }
+    } catch (error) {
+        console.error('APIリクエストエラー:', error);
+        return null;
+    }
+}
+
+
+
+export { CompanyName, GetEmployees ,GetNames,GetActive};
 
 

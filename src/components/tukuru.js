@@ -1,5 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { GetEmployees } from "./API.js"
+import db from '../firebase';
+import { collection, doc, getDocs,getDoc,setDoc } from 'firebase/firestore';
 
 
 // function Sakusei() {
@@ -164,6 +166,93 @@ import { GetEmployees } from "./API.js"
 // }
 
 
+// function Sakusei() {
+//   const today = new Date();
+//   const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+//   const lastDay = new Date(nextMonth.getFullYear(), nextMonth.getMonth() + 1, 0);
+//   const numberOfDays = lastDay.getDate();
+//   const [data, setData] = useState([]);
+//   const [results, setResults] = useState([]);
+//   const names =  GetEmployees();
+
+//   useEffect(() => {
+//     // GetEmployees()から名前を取得
+//     const fetchNames = async () => {
+//       try {
+//         const length = names.length;
+//         const initialData = new Array(length).fill([]).map(() => Array(numberOfDays).fill(''));
+//         setData(initialData);
+//       } catch (error) {
+//         // エラーハンドリング
+//         console.error("データの取得中にエラーが発生しました:", error);
+//       }
+//     };
+
+//     fetchNames();
+//   }, [names]);
+
+//   const handleInputChange = (rowIndex, colIndex, value) => {
+//     const newData = [...data];
+//     newData[rowIndex][colIndex] = value;
+//     setData(newData);
+//   };
+
+//   const handleDisplayData = () => {
+//     const newData = []; // 新しいデータ配列
+  
+//     data.forEach((row, rowIndex) => {
+//       const rowData = row.map((value) => {
+//         return `${value}`;
+//       });
+//       const newRowData = {
+//         row: rowIndex + 1,
+//         data: rowData,
+//       };
+//       newData.push(newRowData);
+//     });
+  
+//     // results ステートにデータを追加
+//     setResults(newData);
+//     console.log(results[1].data[2])//ひとつのデータを取れる
+//   };
+  
+  
+
+//   return (
+//     <div>
+//       <h1>データ入力</h1>
+//       <table>
+//         <thead>
+//           <tr>
+//             <th>名前</th>
+//             {[...Array(numberOfDays).keys()].map((day) => (
+//               <th key={day + 1}>{day + 1}日</th>
+//             ))}
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {data.map((row, rowIndex) => (
+//             <tr key={rowIndex}>
+//               <td>{names[rowIndex].name}</td>
+//               {row.map((value, colIndex) => (
+//                 <td key={colIndex}>
+//                   <input
+//                     type="text"
+//                     value={value}
+//                     onChange={(e) =>
+//                       handleInputChange(rowIndex, colIndex, e.target.value)
+//                     }
+//                   />
+//                 </td>
+//               ))}
+//             </tr>
+//           ))}
+//         </tbody>
+//       </table>
+//       <button onClick={handleDisplayData}>データ表示</button>
+//     </div>
+//   );
+// }
 function Sakusei() {
   const today = new Date();
   const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
@@ -172,6 +261,25 @@ function Sakusei() {
   const [data, setData] = useState([]);
   const [results, setResults] = useState([]);
   const names =  GetEmployees();
+  const nextMonthYear = nextMonth.getFullYear();
+  const nextMonthNumber = nextMonth.getMonth()+1;
+
+
+  const sendDocumentToFirestore = (documentID, fieldName, value) => {
+    //const docRef = db.collection(nextMonthYear+"-"+nextMonthNumber).doc(documentID);
+  
+    // フィールド名を日数から生成
+    const fieldObject = {};
+    fieldObject[fieldName] = value;
+  
+    // docRef.set(fieldObject)
+    //   .then(() => {
+    //     console.log(`ドキュメント ${documentID} にデータをFirestoreに送信しました`);
+    //   })
+    //   .catch((error) => {
+    //     console.error(`ドキュメント ${documentID} へのデータ送信中にエラーが発生しました`, error);
+    //   });
+  };
 
   useEffect(() => {
     // GetEmployees()から名前を取得
@@ -196,23 +304,29 @@ function Sakusei() {
   };
 
   const handleDisplayData = () => {
-    const newData = []; // 新しいデータ配列
-  
+    const newCollectionName = nextMonthYear+'-'+nextMonthNumber;
+    console.log(newCollectionName)
+    const newCollection = collection(db, newCollectionName);
     data.forEach((row, rowIndex) => {
-      const rowData = row.map((value) => {
-        return `${value}`;
+      const documentID = names[rowIndex].name; // ドキュメントIDを名前から取得
+      const newDocRef = doc(newCollection, documentID);
+      const dataset = {}; // データを保存するための空のオブジェクト
+
+      row.forEach((value, colIndex) => {
+        const fieldName = `${colIndex + 1}`; // フィールド名を日数から生成
+        dataset[fieldName] = value; // データをフィールド名と共にオブジェクトに保存
       });
-      const newRowData = {
-        row: rowIndex + 1,
-        data: rowData,
-      };
-      newData.push(newRowData);
+    
+      // Firestoreにデータをセット
+      setDoc(newDocRef, dataset);
     });
-  
-    // results ステートにデータを追加
-    setResults(newData);
-    console.log(results[1].data[2])//ひとつのデータを取れる
+    
+      // setDoc(newDocRef, data[rowIndex]);
+    
+    console.log(data);
+    
   };
+  
   
   
 

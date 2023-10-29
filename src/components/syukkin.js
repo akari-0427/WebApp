@@ -62,15 +62,15 @@ function Hyou() {
     const fetchData = async (collectionName, id) => {
       try {
         const documentId = nowYear.toString()+"-"+nowMonth.toString();
-        const documentRef = doc(db, documentId, collectionName); // db と doc の実装を確認してください
+        const documentRef = doc(db, documentId, collectionName); 
         const documentSnapshot = await getDoc(documentRef);
 
         if (documentSnapshot.exists()) {
           const documentData = documentSnapshot.data();
           console.log(documentSnapshot.data()['1'])//フィールド名を指定する方法パート2
           const specificField = documentData[1];
-          const active = await GetActive(id); // GetActive の実装を確認してください
-          const hantei = Hantei(active.available_types, specificField); // Hantei の実装を確認してください
+          const active = await GetActive(id); 
+          const hantei = Hantei(active.available_types, specificField); 
           console.log(hantei);
           if (hantei === "遅刻") {
             // 遅刻の場合、適切に遅刻人数を増やす

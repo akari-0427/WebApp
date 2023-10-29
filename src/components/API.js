@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const accessToken = '016ec907a4a77ff09cc0d6b65818b8b78d5e79b05125f2c15dba5490e106c211';
+const accessToken = 'dc201c5e35156776aaa66bc6263472375db3810782675e33d87e107b67771784';
 const companyId = 10902758;
 
 function getRequestOptions(method, payload) {

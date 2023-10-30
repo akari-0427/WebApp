@@ -52,6 +52,7 @@ function Hyou() {
   const nowMonth = d.getMonth() + 1;
   const nowYear = d.getFullYear();
   const names = GetEmployees(); // GetEmployees の実装を確認してください
+  const nowDay=d.getDay();
 
   useEffect(() => {
     // 初期化時に documentDataArray を空の配列にリセット
@@ -67,8 +68,9 @@ function Hyou() {
 
         if (documentSnapshot.exists()) {
           const documentData = documentSnapshot.data();
-          console.log(documentSnapshot.data()['1'])//フィールド名を指定する方法パート2
-          const specificField = documentData[1];
+          console.log(documentSnapshot.data()[nowDay])//フィールド名を指定する方法パート2
+          const specificField = documentData[nowDay];
+          //const specificField=documentSnapshot.data()['1']
           const active = await GetActive(id); 
           const hantei = Hantei(active.available_types, specificField); 
           console.log(hantei);
@@ -82,6 +84,7 @@ function Hyou() {
           // 取得したデータを追加
           setDocumentDataArray((prevDataArray) => [...prevDataArray, specificField]);
           setHanteiArray((prevDataArray1) => [...prevDataArray1, hantei]);
+          
         } else {
           console.log(`指定されたドキュメント (${collectionName}) が存在しません。`);
         }
@@ -94,6 +97,7 @@ function Hyou() {
     names.forEach((employee) => {
       fetchData(employee.name, employee.id);
     });
+    
   }, [names]);
 
   return (

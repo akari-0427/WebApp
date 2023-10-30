@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import { GetEmployees } from "./API.js"
 import db from '../firebase';
 import { collection, doc, getDocs,getDoc,setDoc } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
 
 
 // function Sakusei() {
@@ -361,10 +362,96 @@ function Sakusei() {
           ))}
         </tbody>
       </table>
-      <button onClick={handleDisplayData}>データ表示</button>
+      <Link to="/confirm">
+        <button onClick={handleDisplayData}>作成する</button>
+      </Link>
     </div>
   );
 }
 
+function Kakunin(){
+  const today = new Date();
+  const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+  const lastDay = new Date(nextMonth.getFullYear(), nextMonth.getMonth() + 1, 0);
+  const numberOfDays = lastDay.getDate();
+  const [data, setData] = useState([]);
+  const [results, setResults] = useState([]);
+  const [documentDataArray, setDocumentDataArray] = useState([]);
+  const names =  GetEmployees();
+  const nextMonthYear = nextMonth.getFullYear();
+  const nextMonthNumber = nextMonth.getMonth()+1;
+  useEffect(() => {
+    const fetchData = async (collectionName) => {
+      try {
+        const documentId = nextMonthYear.toString()+"-"+nextMonthNumber.toString();
+        const documentRef = doc(db, documentId, collectionName); // db と doc の実装を確認してください
+        const documentSnapshot = await getDoc(documentRef);
 
-export default Sakusei;
+        if (documentSnapshot.exists()) {
+          const documentData = documentSnapshot.data();
+          setDocumentDataArray((prevDataArray) => {
+            // 新しいデータを追加するために配列をコピー
+            const newDataArray = [...prevDataArray];
+
+            // フィールド名が1から31のデータを格納する配列
+            const dailyData = [];
+
+            for (let i = 1; i <= numberOfDays; i++) {
+              // フィールド名が "1" から "31" のデータを取得して dailyData に追加
+              dailyData.push(documentData[i.toString()] || null);
+            }
+
+            newDataArray.push(dailyData);
+
+            return newDataArray;
+          });
+        } else {
+          console.log(`指定されたドキュメント (${collectionName}) が存在しません。`);
+        }
+      } catch (error) {
+        console.error(`データの取得エラー (${collectionName}):`, error);
+      }
+    };
+
+    // names 配列をループして fetchData を呼び出す
+    names.forEach((employee) => {
+      fetchData(employee.name); // 各名前を collectionName に設定
+    });
+  }, [names]);
+  return (
+    <div>
+      <h2>{nextMonthNumber}月のシフト</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>名前</th>
+            {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
+              <th key={day}>{day}日</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {names.map((employee, index) => (
+            <tr key={employee.id}>
+              <td>{employee.name}</td>
+              {documentDataArray[index] ? ( // 各要素が存在するかどうかを確認
+                documentDataArray[index].map((item, i) => (
+                  <td key={i}>{item}</td>
+                ))
+              ) : (
+                // 存在しない場合は空のセルを表示
+                Array.from({ length: 31 }, (_, i) => <td key={i}></td>)
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function Hensyu(){
+
+}
+
+export {Sakusei,Hensyu,Kakunin};

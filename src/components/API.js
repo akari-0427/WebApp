@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const accessToken = 'a64abc8ec530bf218cc5ff68c4c29e1cf7908f9458bc52e24e523b007986dd42';
+const accessToken = '510dbc2dffc5bea160c84042cf2d6a48fd5c7dd04ff15dd3cb041ae357919c17';
 const companyId = 10902758;
 
 function getRequestOptions(method, payload) {
@@ -12,6 +12,39 @@ function getRequestOptions(method, payload) {
     },
     body: payload ? JSON.stringify(payload) : null,
   };
+}
+
+function PostTime(id){
+  useEffect(() => {
+    async function fetchEmployees() {
+        try {
+            const requestUrl = `https://api.freee.co.jp/hr/api/v1/employees/${id}/time_clocks`;
+            const response = await fetch(requestUrl, getRequestOptions('POST'));
+
+            if (response.status === 200) {
+                const responseJson = await response.json();
+                // const employeeInfo = responseJson.map((employee) => {
+                //   return {
+                //     id: employee.id,
+                //     name: employee.display_name,
+                //   };
+                // });
+                // console.log(responseJson);
+                // setEmployees(employeeInfo);
+                console.log(responseJson);
+               
+            } else {
+                console.error('APIエラー:', response.statusText);
+            }
+        } catch (error) {
+            console.error('APIリクエストエラー:', error);
+        }
+    }
+    fetchEmployees();
+}, []);
+
+return null;
+
 }
 
 function CompanyName() {
@@ -174,6 +207,6 @@ async function GetActive(id) {
 
 
 
-export { CompanyName, GetEmployees ,GetNames,GetActive,GetEmployeesNumber};
+export { CompanyName, GetEmployees ,GetNames,GetActive,GetEmployeesNumber,PostTime};
 
 

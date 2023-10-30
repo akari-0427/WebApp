@@ -3,6 +3,7 @@ import { GetEmployees } from "./API.js"
 import db from '../firebase';
 import { collection, doc, getDocs,getDoc,setDoc } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
+import { RestData,NextMonthData } from './sihuto.js';
 
 
 // function Sakusei() {
@@ -259,13 +260,14 @@ function Sakusei() {
   const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
   const lastDay = new Date(nextMonth.getFullYear(), nextMonth.getMonth() + 1, 0);
   const numberOfDays = lastDay.getDate();
-  const [data, setData] = useState([]);
   const [results, setResults] = useState([]);
   const names =  GetEmployees();
   const nextMonthYear = nextMonth.getFullYear();
   const nextMonthNumber = nextMonth.getMonth()+1;
-
-
+  const [documentDataArray, setDocumentDataArray] = useState([]);
+  const resnt = RestData(documentDataArray, setDocumentDataArray);
+  const [data, setData] = useState(resnt);
+  //console.log(resnt[0][1])
   const sendDocumentToFirestore = (documentID, fieldName, value) => {
     //const docRef = db.collection(nextMonthYear+"-"+nextMonthNumber).doc(documentID);
   
@@ -284,19 +286,22 @@ function Sakusei() {
 
   useEffect(() => {
     // GetEmployees()から名前を取得
-    const fetchNames = async () => {
-      try {
-        const length = names.length;
-        const initialData = new Array(length).fill([]).map(() => Array(numberOfDays).fill(''));
-        setData(initialData);
-      } catch (error) {
-        // エラーハンドリング
-        console.error("データの取得中にエラーが発生しました:", error);
-      }
-    };
+    // const fetchNames = async () => {
+    //   try {
+    //     const length = names.length;
+    //     const initialData = new Array(length).fill([]).map(() => Array(numberOfDays).fill(''));
+    //     setData(initialData);
+    //   } catch (error) {
+    //     // エラーハンドリング
+    //     console.error("データの取得中にエラーが発生しました:", error);
+    //   }
+    // };
 
-    fetchNames();
-  }, [names]);
+    // fetchNames();
+    
+    setData(resnt);
+    console.log(data)
+  }, [resnt]);
 
   const handleInputChange = (rowIndex, colIndex, value) => {
     const newData = [...data];
@@ -327,9 +332,6 @@ function Sakusei() {
     console.log(data);
     
   };
-  
-  
-  
 
   return (
     <div>
@@ -351,7 +353,7 @@ function Sakusei() {
                 <td key={colIndex}>
                   <input
                     type="text"
-                    value={value}
+                    value={value||""}
                     onChange={(e) =>
                       handleInputChange(rowIndex, colIndex, e.target.value)
                     }
@@ -446,12 +448,108 @@ function Kakunin(){
           ))}
         </tbody>
       </table>
+      <Link to="/Shihuto">戻る</Link>
     </div>
   );
 }
 
 function Hensyu(){
+  const today = new Date();
+  const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+  const lastDay = new Date(nextMonth.getFullYear(), nextMonth.getMonth() + 1, 0);
+  const numberOfDays = lastDay.getDate();
+  const [results, setResults] = useState([]);
+  const names =  GetEmployees();
+  const nextMonthYear = nextMonth.getFullYear();
+  const nextMonthNumber = nextMonth.getMonth()+1;
+  const [documentDataArray, setDocumentDataArray] = useState([]);
+  const nextMonthdata = NextMonthData(documentDataArray, setDocumentDataArray);
+  const [data, setData] = useState(nextMonthdata);
 
+  useEffect(() => {
+    // GetEmployees()から名前を取得
+    // const fetchNames = async () => {
+    //   try {
+    //     const length = names.length;
+    //     const initialData = new Array(length).fill([]).map(() => Array(numberOfDays).fill(''));
+    //     setData(initialData);
+    //   } catch (error) {
+    //     // エラーハンドリング
+    //     console.error("データの取得中にエラーが発生しました:", error);
+    //   }
+    // };
+
+    // fetchNames();
+    setData(nextMonthdata);
+    console.log(data)
+  }, [nextMonthdata]);
+
+  const handleInputChange = (rowIndex, colIndex, value) => {
+    const newData = [...data];
+    newData[rowIndex][colIndex] = value;
+    setData(newData);
+  };
+
+  const handleDisplayData = () => {
+    const newCollectionName = nextMonthYear+'-'+nextMonthNumber;
+    console.log(newCollectionName)
+    const newCollection = collection(db, newCollectionName);
+    data.forEach((row, rowIndex) => {
+      const documentID = names[rowIndex].name; // ドキュメントIDを名前から取得
+      const newDocRef = doc(newCollection, documentID);
+      const dataset = {}; // データを保存するための空のオブジェクト
+
+      row.forEach((value, colIndex) => {
+        const fieldName = `${colIndex + 1}`; // フィールド名を日数から生成
+        dataset[fieldName] = value; // データをフィールド名と共にオブジェクトに保存
+      });
+    
+      // Firestoreにデータをセット
+      setDoc(newDocRef, dataset);
+    });
+    
+      // setDoc(newDocRef, data[rowIndex]);
+    
+    console.log(data);
+    
+  };
+
+  return (
+    <div>
+      <h1>データ入力</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>名前</th>
+            {[...Array(numberOfDays).keys()].map((day) => (
+              <th key={day + 1}>{day + 1}日</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              <td>{names[rowIndex].name}</td>
+              {row.map((value, colIndex) => (
+                <td key={colIndex}>
+                  <input
+                    type="text"
+                    value={value||""}
+                    onChange={(e) =>
+                      handleInputChange(rowIndex, colIndex, e.target.value)
+                    }
+                  />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <Link to="/confirm">
+        <button onClick={handleDisplayData}>作成する</button>
+      </Link>
+    </div>
+  );
 }
 
 export {Sakusei,Hensyu,Kakunin};

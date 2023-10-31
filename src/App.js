@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import {Sakusei ,Hensyu,Kakunin} from './components/tukuru';
 import  TimeCard  from './timecard';
 import Zansu from './zansu';
+import {Kako} from "./components/kako";
 
 function App() {
   return (
@@ -21,17 +22,26 @@ function App() {
           <Route path="/rest" element={<Rest/>} />
           <Route path="/timecard"element={<TimeCard/>}/>
           <Route path="/zansu"element={<Zansu/>}/>
+          <Route path="/Shihuto/kako"element={<Kako/>}/>
           <Route
             path="/"
             element={
               <>
-                <CompanyName />
-                <DateTimeDisplay />
-                <Link to="/Shihuto">シフト管理へ</Link>
-                <Link to="/timecard">タイムレコーダー</Link>
-                <Link to="/zansu">残数確認</Link>
-                
-                <Hyou />
+                <div className='home1'>
+                  <div className='home2'>
+                    <Link to="/Shihuto" className='home5'>シフト管理へ</Link>
+                    <Link to="/timecard" className='home5'>タイムレコーダー</Link>
+                    <Link to="/zansu" className='home5'>残数確認</Link>
+                  </div>
+                  <div className='home3'>
+                    <div className='title'>
+                    <CompanyName />
+                    </div>
+                    <DateTimeDisplay />
+
+                    <Hyou />
+                  </div>
+                </div>
                 {/* リンクをクリックすると画面遷移 */}
               </>
             }

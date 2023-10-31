@@ -18,15 +18,19 @@ function Kensaku() {
 
   return (
     <div>
+      <div>
       <input
+      className='kensaku2'
         type="text"
         placeholder="IDを入力"
         value={searchId}
         onChange={(e) => setSearchId(e.target.value)}
       />
-      <button onClick={handleSearch}>検索</button>
+      <button onClick={handleSearch} className='kensaku'>検索</button>
 
       {searchResult !== null && <TimeRecord id={searchId} />}
+      </div>
+      <Link to ="/">ホームへ</Link>
 
     </div>
   );

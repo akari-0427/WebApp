@@ -102,9 +102,9 @@ function Hyou() {
 
   return (
     <div>
-      {lateCount > 0 ? <p>遅刻人数: {lateCount}人</p> : null}
-      {overtimeCount > 0 ? <p>残業人数: {overtimeCount}人</p> : null}
-      <table>
+      {lateCount > 0 ? <p className='tikoku hantei'>遅刻人数: {lateCount}人</p> : null}
+      {overtimeCount > 0 ? <p className='hantei'>残業人数: {overtimeCount}人</p> : null}
+      <table className='hyou'>
         <thead>
           <tr>
             <th>ID</th>

@@ -18,7 +18,7 @@ function DateTimeDisplay() {
 
   return (
     <div>
-      <p>{currentDateTime.toLocaleString()}</p>
+      <p className='time'>{currentDateTime.toLocaleString()}</p>
     </div>
   );
 }

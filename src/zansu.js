@@ -1,10 +1,13 @@
-import {NameSyutoku,GetZansu} from "./components/remain"
+import { Line } from "react-chartjs-2";
+import {NameSyutoku,GetZansu, Gurahu} from "./components/remain"
+import { Link } from "react-router-dom";
 
 function Zansu(){
     return(
         <div>
-            <NameSyutoku/>
             <GetZansu/>
+            
+            <Link to="/" className="lin">ホームへ</Link>
         </div>
     );
 

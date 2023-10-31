@@ -5,6 +5,10 @@ function TimeCard(){
     return(
         <div>
             <Kensaku/>
+
+            <div>
+                
+            </div>
         </div>
     );
 

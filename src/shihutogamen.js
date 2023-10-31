@@ -6,9 +6,11 @@ function ShihutoKanri() {
   return (
     <div className="App">
       <Shihuto/>
-      <Link to="/rest">休み希望</Link>
+      <Link to="/rest" className="lin">休み希望</Link>
       <Seni/>
-      <Link to="/">ホームへ</Link>
+      <Link to="kako" className="lin">過去のシフト</Link>
+
+      <Link to="/" className="lin">ホームへ</Link>
     </div>
   );
 }

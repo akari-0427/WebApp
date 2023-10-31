@@ -151,20 +151,36 @@ function NextMonthData(documentDataArray, setDocumentDataArray){//ステート�
 }
 
 
+function getNextMonthDays() {
+  const today = new Date();
+  const nextMonth = new Date(today);
+  nextMonth.setMonth(today.getMonth() + 1);
+  nextMonth.setDate(0); // 0日目（前月の最終日）にセット
+
+  return nextMonth.getDate();
+}
 
 
 function Rest(){
   const [documentDataArray, setDocumentDataArray] = useState([]); // データを格納する配列
   const names = GetEmployees();
   const today = new Date();
-  const nowDay = today.getDay();
-  const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1);
+  const nowDay = today.getDate();
+  const nextMonth = new Date(today.getFullYear(), today.getMonth() + 2);
   const lastDay = new Date(nextMonth.getFullYear(), nextMonth.getMonth() + 1, 0);
-  const numberOfDays = lastDay.getDate();
-  const month = today.getMonth();
+  let numberOfDays = lastDay.getDate();
+  let month = today.getMonth()+1;
+  const nextMonth1 = (today.getMonth() + 1) % 12; // 来月の月の数字 (0 から 11)
+  const nextMonthNumber = nextMonth1 + 1; // 来月の月の数字 (1 から 12)
+  const daysInNextMonth = getNextMonthDays();
+  console.log(nowDay)
 
   if(nowDay >=15){
-    month = nextMonth;
+    month = nextMonthNumber;
+    console.log(nextMonthNumber)
+    numberOfDays = daysInNextMonth
+    
+
   }
   
   useEffect(() => {
@@ -213,7 +229,7 @@ function Rest(){
         <thead>
           <tr>
             <th>名前</th>
-            {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
+            {Array.from({ length: numberOfDays }, (_, i) => i + 1).map((day) => (
               <th key={day}>{day}日</th>
             ))}
           </tr>
@@ -297,7 +313,7 @@ function Shihuto() {
           <thead>
             <tr>
               <th>名前</th>
-              {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
+              {Array.from({ length: numberOfDays }, (_, i) => i + 1).map((day) => (
                 <th key={day}>{day}日</th>
               ))}
             </tr>
@@ -312,7 +328,7 @@ function Shihuto() {
                   ))
                 ) : (
                   // 存在しない場合は空のセルを表示
-                  Array.from({ length: 31 }, (_, i) => <td key={i}></td>)
+                  Array.from({ length: numberOfDays }, (_, i) => <td key={i}></td>)
                 )}
               </tr>
             ))}
@@ -322,7 +338,6 @@ function Shihuto() {
     );
   }
   
-  
-  
+    
 
 export {Shihuto,Rest,RestData,NextMonthData};

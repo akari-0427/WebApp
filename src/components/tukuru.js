@@ -304,6 +304,22 @@ function Sakusei() {
   }, [resnt]);
 
   const handleInputChange = (rowIndex, colIndex, value) => {
+    switch (value) {
+      case '1':
+        value = '朝';
+        break;
+      case '2':
+        value = '昼';
+        break;
+      case '3':
+        value = '夜';
+        break;
+      case '4':
+        value = '休';
+        break;
+      default:
+        // 1, 2, 3, 4以外の入力はそのまま
+    }
     const newData = [...data];
     newData[rowIndex][colIndex] = value;
     setData(newData);
@@ -485,6 +501,22 @@ function Hensyu(){
   }, [nextMonthdata]);
 
   const handleInputChange = (rowIndex, colIndex, value) => {
+    switch (value) {
+      case '1':
+        value = '朝';
+        break;
+      case '2':
+        value = '昼';
+        break;
+      case '3':
+        value = '夜';
+        break;
+      case '4':
+        value = '休';
+        break;
+      default:
+        // 1, 2, 3, 4以外の入力はそのまま
+    }
     const newData = [...data];
     newData[rowIndex][colIndex] = value;
     setData(newData);
@@ -517,6 +549,7 @@ function Hensyu(){
   return (
     <div>
       <h1>データ入力</h1>
+      <h2>{nextMonthNumber}月のシフト</h2>
       <table>
         <thead>
           <tr>
@@ -546,8 +579,9 @@ function Hensyu(){
         </tbody>
       </table>
       <Link to="/confirm">
-        <button onClick={handleDisplayData}>作成する</button>
+        <button onClick={handleDisplayData}>編集する</button>
       </Link>
+      <Link to="/Shihuto">今月のシフトに戻る</Link>
     </div>
   );
 }

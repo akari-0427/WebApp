@@ -46,10 +46,10 @@ function Seni() {
   return (
     <div className="App">
       {collectionExists ? (
-        <Link to="/edit">編集画面へ</Link>
+        <Link to="/edit" className="lin">編集画面へ</Link>
       ) : (
         <div>
-          <Link to="/create">
+          <Link to="/create" className="lin">
             制作画面へ
           </Link>
           {now.getDate() > 20 && <p>まだシフトが作成されていません</p>}

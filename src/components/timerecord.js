@@ -103,21 +103,21 @@ function TimeRecord(props) {
  console.log(record)
   return (
     <div>
-      <div>
+      <div className='name'>
         <span>名前:</span>
         <span>{name}</span>
       </div>
       <div>
         <h3>今月のタイムレコーダー履歴</h3>
         <div></div>
-        <table border="1">
+        <table border="1" className='record1'>
           <thead>
             <tr>
               <th>種別</th>
               <th>日時</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className='record'>
             {record.map((entry, index) => (
               <tr key={index}>
                 <th>{entry.type}</th>
@@ -131,11 +131,11 @@ function TimeRecord(props) {
         <h3>タイムレコーダー(動作確認用)</h3>
         <form id="workRecordForm" onSubmit={handleWorkRecordFormSubmit}>
           <div>
-            <label>対象日時: </label>
-            <input type="date" name="target_date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
-            <input type="time" name="target_time" value={targetTime} onChange={(e) => setTargetTime(e.target.value)} />
+            <label className='reco'>対象日時: </label>
+            <input className='reco2' type="date" name="target_date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
+            <input className='reco2'type="time" name="target_time" value={targetTime} onChange={(e) => setTargetTime(e.target.value)} />
             <br />
-            <label>登録種別</label>
+            <label className='reco'>登録種別</label>
             <select name="target_type" id="pet-select" value={targetType} onChange={(e) => setTargetType(e.target.value)}>
               <option value="clock_in">出勤</option>
               <option value="break_begin">休憩開始</option>
@@ -154,7 +154,7 @@ function TimeRecord(props) {
       </div>
       <div>
         <div className="btn-frame">
-          <Link to="/">ホームへ</Link>
+          
         </div>
       </div>
     </div>

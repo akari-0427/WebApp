@@ -41,7 +41,7 @@ th,td {
   border: solid 1px;  /* 枠線指定 */
   padding: 10px;      /* 余白指定 */             /* 枠線指定 */
 }
-th{
+thead{
   background-color: #fff5bd;
 }
 
@@ -122,4 +122,25 @@ button{
 }
 .kensaku2{
   width: 300px;
+}
+.btn{
+  width: 200px;
+}
+
+.record{
+  background-color: white;
+}
+.record1{
+  margin-left: auto;
+  margin-right: auto;
+  
+}
+.name{
+  font-size: 30px;
+}
+.reco{
+  font-size: 20px;
+}
+.reco2{
+  width: 20px;
 }

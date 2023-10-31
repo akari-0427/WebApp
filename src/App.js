@@ -6,7 +6,8 @@ import DateTimeDisplay from './components/time';
 import ShihutoKanri from './shihutogamen';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import {Sakusei ,Hensyu,Kakunin} from './components/tukuru';
-import { TimeCard } from './timecard';
+import  TimeCard  from './timecard';
+import Zansu from './zansu';
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
           <Route path="/create" element={<Sakusei/>} />
           <Route path="/confirm" element={<Kakunin/>} />
           <Route path="/rest" element={<Rest/>} />
-          <Route path="/timecard"element={TimeCard}/>
+          <Route path="/timecard"element={<TimeCard/>}/>
+          <Route path="/zansu"element={<Zansu/>}/>
           <Route
             path="/"
             element={
@@ -27,6 +29,7 @@ function App() {
                 <DateTimeDisplay />
                 <Link to="/Shihuto">シフト管理へ</Link>
                 <Link to="/timecard">タイムレコーダー</Link>
+                <Link to="/zansu">残数確認</Link>
                 
                 <Hyou />
                 {/* リンクをクリックすると画面遷移 */}

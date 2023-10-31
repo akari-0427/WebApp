@@ -8,7 +8,7 @@ function Seni() {
   const currentYear = now.getFullYear();
   const nextMonth = now.getMonth() + 2; // 次の月の数字
   const nouDay = now.getDay();
-  if(nextMonth==12){
+  if(nextMonth==1){
     currentYear++;
   }
   const collectionName = `${currentYear}-${nextMonth}`;

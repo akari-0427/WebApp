@@ -40,6 +40,7 @@ function App() {
                     <DateTimeDisplay />
 
                     <Hyou />
+                    
                   </div>
                 </div>
                 {/* リンクをクリックすると画面遷移 */}

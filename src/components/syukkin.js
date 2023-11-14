@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import db from '../firebase';
 import { collection, doc, getDocs,getDoc } from 'firebase/firestore';
 import {GetEmployees,GetActive}from "./API.js"
+import { addtikoku, addzangyo } from "./tuuti.js"
 
 function Hantei2() {
     const [data, setData] = useState([]); // データを格納するステート変数
@@ -42,49 +43,40 @@ function Hantei2() {
     return null;
 }
 
+
 function Hyou() {
   const [documentDataArray, setDocumentDataArray] = useState([]);
   const [hanteiArray, setHanteiArray] = useState([]);
-  const [lateCount, setLateCount] = useState(0); // 遅刻の人数の状態
-  const [overtimeCount, setOvertimeCount] = useState(0); // 残業の人数の状態
+  const [lateCount, setLateCount] = useState(0);
+  const [overtimeCount, setOvertimeCount] = useState(0);
 
   let d = new Date();
   const nowMonth = d.getMonth() + 1;
   const nowYear = d.getFullYear();
-  const names = GetEmployees(); // GetEmployees の実装を確認してください
-  const nowDay=d.getDay();
+  const names = GetEmployees();
+  const nowDay = d.getDate();
 
   useEffect(() => {
-    // 初期化時に documentDataArray を空の配列にリセット
-    setDocumentDataArray([]);
-    setHanteiArray([]);
-
-    // fetchData 関数の定義
     const fetchData = async (collectionName, id) => {
       try {
-        const documentId = nowYear.toString()+"-"+nowMonth.toString();
-        const documentRef = doc(db, documentId, collectionName); 
+        const documentId = nowYear.toString() + '-' + nowMonth.toString();
+        const documentRef = doc(db, documentId, collectionName);
         const documentSnapshot = await getDoc(documentRef);
 
         if (documentSnapshot.exists()) {
           const documentData = documentSnapshot.data();
-          console.log(documentSnapshot.data()[nowDay])//フィールド名を指定する方法パート2
           const specificField = documentData[nowDay];
-          //const specificField=documentSnapshot.data()['1']
-          const active = await GetActive(id); 
-          const hantei = Hantei(active.available_types, specificField); 
-          console.log(hantei);
-          if (hantei === "遅刻") {
-            // 遅刻の場合、適切に遅刻人数を増やす
-            setLateCount((prevLateCount) => prevLateCount + 1);
-          } else if (hantei === "残業") {
-            // 残業の場合、適切に残業人数を増やす
-            setOvertimeCount((prevOvertimeCount) => prevOvertimeCount + 1);
-          }
-          // 取得したデータを追加
+          const active = await GetActive(id);
+          const hantei = Hantei(active.available_types, specificField, collectionName,id);
+
           setDocumentDataArray((prevDataArray) => [...prevDataArray, specificField]);
           setHanteiArray((prevDataArray1) => [...prevDataArray1, hantei]);
-          
+
+          if (hantei === '遅刻') {
+            setLateCount((prevLateCount) => prevLateCount + 1);
+          } else if (hantei === '残業') {
+            setOvertimeCount((prevOvertimeCount) => prevOvertimeCount + 1);
+          }
         } else {
           console.log(`指定されたドキュメント (${collectionName}) が存在しません。`);
         }
@@ -93,18 +85,36 @@ function Hyou() {
       }
     };
 
-    // ループを外部で実行
-    names.forEach((employee) => {
-      fetchData(employee.name, employee.id);
-    });
-    
+    const fetchNames = async () => {
+      setDocumentDataArray([]); // 前回のデータをクリア
+      setHanteiArray([]); // 前回のデータをクリア
+      setLateCount(0); // 前回のデータをクリア
+      setOvertimeCount(0); // 前回のデータをクリア
+
+      for (const employee of names) {
+        await fetchData(employee.name, employee.id);
+        // console.log(documentDataArray); // この位置での console.log は意味がない
+      }
+    };
+
+    fetchNames(); // 初回のデータ取得
+
+    const intervalId = setInterval(() => {
+      // 1分ごとにデータを再取得
+      fetchNames();
+    }, 60000); // 1分ごとに実行
+
+    return () => {
+      // コンポーネントがアンマウントされるときにクリーンアップ
+      clearInterval(intervalId);
+    };
   }, [names]);
 
   return (
     <div>
-      {lateCount > 0 ? <p className='tikoku hantei'>遅刻人数: {lateCount}人</p> : null}
-      {overtimeCount > 0 ? <p className='hantei'>残業人数: {overtimeCount}人</p> : null}
-      <table className='hyou'>
+      {lateCount > 0 ? <p className="tikoku hantei">遅刻人数: {lateCount}人</p> : null}
+      {overtimeCount > 0 ? <p className="hantei">残業人数: {overtimeCount}人</p> : null}
+      <table className="hyou">
         <thead>
           <tr>
             <th>ID</th>
@@ -127,10 +137,12 @@ function Hyou() {
     </div>
   );
 }
+
+
   
 
 
-  function Hantei(active, sihuto1) {
+  function Hantei(active, sihuto1,name,id) {
     let d = new Date();
     const nowHours = d.getHours();
     const nowMinutes = d.getMinutes();
@@ -139,6 +151,7 @@ function Hyou() {
     console.log(nowHours);
     const activeType = active[0];
     console.log(activeType);
+    console.log(nowMinutes)
 
     if (sihuto === "朝") {
         if (nowHours >= 8 && activeType !== 'clock_in') {
@@ -172,6 +185,18 @@ function Hyou() {
         }
     } else if (sihuto === "休") {
         hantei = "休み";
+    }
+
+    if(hantei==="遅刻"){
+      if(nowMinutes===5){
+        addtikoku(name,id);
+        console.log("遅刻")
+      }
+    }else if(hantei==="残業"){
+      if(nowMinutes===5){
+        addtikoku(name,id);
+        console.log("残業")
+      }
     }
 
     return hantei;

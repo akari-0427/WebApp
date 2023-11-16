@@ -86,10 +86,10 @@ function Hyou() {
     };
 
     const fetchNames = async () => {
-      setDocumentDataArray([]); // 前回のデータをクリア
-      setHanteiArray([]); // 前回のデータをクリア
-      setLateCount(0); // 前回のデータをクリア
-      setOvertimeCount(0); // 前回のデータをクリア
+      setDocumentDataArray([]); 
+      setHanteiArray([]); 
+      setLateCount(0); 
+      setOvertimeCount(0); 
 
       for (const employee of names) {
         await fetchData(employee.name, employee.id);

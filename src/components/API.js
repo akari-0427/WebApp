@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const accessToken = '40ce25f173f463a012405a47a988210dd40aa5ebb29b197ade7c984afda0a66c';
+const accessToken = '7d58f7d4ffac12b2123a2706f4b1aaf45c543acf1e79f398ab7846a62a7ac0dc';
 const companyId = 10902758;
 
 function getRequestOptions(method, payload) {
@@ -17,13 +17,19 @@ function getRequestOptions(method, payload) {
 
 async function GetTimeClocks(id) {
   try {
-    const requestUrl = `https://api.freee.co.jp/hr/api/v1/employees/${id}/time_clocks?company_id=${companyId}`;
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1; 
+    //const day = today.getDate();
+    const formattedDate = year + "-" + month + "-01";
+    const requestUrl = `https://api.freee.co.jp/hr/api/v1/employees/${id}/time_clocks?company_id=${companyId}&from_date=${formattedDate}`;
     const response = await fetch(requestUrl, getRequestOptions());
     if (response.status === 200) {
       const responseJson = await response.json();
       const formattedRecords = responseJson.map((timeClock) => {
         const type = timeClock.type;
-        const datetime = new Date(timeClock.datetime);
+        const datetime = new Date(timeClock.datetime ); 
+        console.log(datetime)
         const dateStr = `${datetime.getFullYear()}年 ${datetime.getMonth() + 1}月 ${datetime.getDate()}日 ${datetime.getHours()}時 ${datetime.getMinutes()}分`;
         let typeName = '';
 
@@ -298,6 +304,7 @@ async function GetActive(id) {
         const month = today.getMonth() + 1;
         const day = today.getDate();
         const formattedDate = `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
+        console.log(formattedDate)
         const requestUrl = `https://api.freee.co.jp/hr/api/v1/employees/${id}/time_clocks/available_types?company_id=${companyId}&date=${formattedDate}`;
 
         const response = await fetch(requestUrl, getRequestOptions());

@@ -38,6 +38,7 @@ function Kensaku() {
 
 
 
+
 function TimeRecord(props) {
   const number = props.id;
   console.log(number)

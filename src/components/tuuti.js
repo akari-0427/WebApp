@@ -1,5 +1,5 @@
 import { format, addDays } from 'date-fns';
-import { updateDoc, doc } from 'firebase/firestore';
+import { updateDoc, doc ,setDoc} from 'firebase/firestore';
 import db from '../firebase';
 
 function time() {
@@ -23,6 +23,17 @@ async function addFieldToDocument(collectionName, documentId, newField) {
     console.log('既存のドキュメントに新しいフィールドを追加しました。');
   } catch (error) {
     console.error('ドキュメント更新エラー:', error);
+    try {
+      // ドキュメントへの参照を取得
+      const myDocRef = doc(db, collectionName, documentId);
+  
+      // 新しいドキュメントを作成してフィールドを追加
+      await setDoc(myDocRef, newField);
+  
+      console.log('新しいドキュメントを作成し、フィールドを追加しました。');
+    } catch (error) {
+      console.error('ドキュメント作成エラー:', error);
+    }
   }
 }
 

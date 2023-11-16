@@ -156,7 +156,7 @@ function getNextMonthDays() {
   const nextMonth = new Date(today);
   nextMonth.setMonth(today.getMonth() + 1);
   nextMonth.setDate(0); // 0日目（前月の最終日）にセット
-
+  console.log(nextMonth)
   return nextMonth.getDate();
 }
 
@@ -172,13 +172,13 @@ function Rest(){
   let month = today.getMonth()+1;
   const nextMonth1 = (today.getMonth() + 1) % 12; // 来月の月の数字 (0 から 11)
   const nextMonthNumber = nextMonth1 + 1; // 来月の月の数字 (1 から 12)
-  const daysInNextMonth = getNextMonthDays();
+  let daysInNextMonth = getNextMonthDays();
   console.log(nowDay)
 
   if(nowDay >=15){
     month = nextMonthNumber;
-    console.log(nextMonthNumber)
-    numberOfDays = daysInNextMonth
+    console.log(daysInNextMonth)
+    daysInNextMonth=numberOfDays;
     
 
   }
@@ -199,7 +199,7 @@ function Rest(){
             // フィールド名が1から31のデータを格納する配列
             const dailyData = [];
 
-            for (let i = 1; i <= numberOfDays; i++) {
+            for (let i = 1; i <= daysInNextMonth; i++) {
               // フィールド名が "1" から "31" のデータを取得して dailyData に追加
               dailyData.push(documentData[i.toString()] || null);
             }

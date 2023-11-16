@@ -102,7 +102,7 @@ function GetZansu() {
       const thisMonth = today.getMonth() + 1;
       const lastDayOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
       const lastDay = lastDayOfLastMonth.getDate();
-      const nowday=today.getDate();
+      const nowday=today.getDate()-1;
   async function GetZansu() {
     try {
       

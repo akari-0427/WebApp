@@ -1,4 +1,4 @@
-##もう一つのプロジェクトWebApp-2の方に通知が来ます
+# もう一つのプロジェクトWebApp-2の方に通知が来ます
 
 # Getting Started with Create React App
 
